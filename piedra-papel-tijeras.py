@@ -14,7 +14,7 @@ while True:
        #print("esto indica el jugador: " + str(jugador))
 
     if jugador.lower() == "s":
-       print("termina programa")
+       print(" --- >> Termina programa <<< --- ")
        break
 
     maquina=ppt[random.randint(0,len(ppt)-1)]
