@@ -2,6 +2,8 @@ import random
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 
+
+
 ppt=["piedra","papel","tijeras"]
 ronda = 0
 jugador_gana=0
@@ -30,18 +32,23 @@ while True:
     if jugador == "piedra": 
       img = mpimg.imread("/Users/aki/Desktop/varios_python/piedra.png")
       imgplot = plt.imshow(img)
+      plt.axis('off')  # Ocultar ejes
       plt.show()
     elif jugador == "papel":
       img = mpimg.imread("/Users/aki/Desktop/varios_python/papel.jpg")
       imgplot = plt.imshow(img)
+      plt.axis('off')  # Ocultar ejes
       plt.show()
     else:
       img = mpimg.imread("/Users/aki/Desktop/varios_python/tijeras.png")
       imgplot = plt.imshow(img)
+      plt.axis('off')  # Ocultar ejes
       plt.show()
     print("################################################################")
 
+#### inicio de batalla ###
     if ((jugador == "piedra" and maquina.lower() == "piedra" ) or (jugador == "papel" and maquina.lower() == "papel" ) or (jugador == "tijeras" and maquina.lower() == "tijeras")):
+          
           print("****   EEEMMPAATTEE!!!  ****" )
           
     elif (jugador == "piedra" and maquina.lower() == "tijeras") or (jugador == "papel" and maquina.lower() == "piedra") or (jugador == "tijeras" and maquina.lower() == "papel"):
@@ -52,6 +59,7 @@ while True:
      print("En esta ronda gana máquina" )
      maquina_gana=maquina_gana + 1
     
+ #### fin de batalla ####
    
     if (maquina_gana == 2):
      print(">>>  MAQUINA GANADORA!!! <<<< " )
@@ -68,3 +76,4 @@ while True:
         break
        else: 
           print("siguiente ronda")
+
