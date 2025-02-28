@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz de Roles</title>
+    <title>Reiniciar Quiz</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Has completado la sección de Scrum</h1>
-    <p>{{ response }}</p>
-    <p>Ahora pasaremos a la sección de roles en Scrum.</p>
-    <a href="/rol"><button>Continuar</button></a>
+    <h1>Quiz Reiniciado</h1>
+    <p>Tu progreso ha sido restablecido. ¡Puedes comenzar de nuevo!</p>
+    
+    <a href="/"><button>Comenzar de nuevo</button></a>  <!-- Redirige al inicio -->
 </body>
 </html>

@@ -45,7 +45,7 @@ def main():
 roles = [
     {"question": "product_owner", "answer": "representa los intereses del cliente y define el product backlog o lista de tareas"},
     {"question": "scrum_master", "answer": "facilita el proceso scrum, elimina obstaculos y asegura que el equipo siga los principios de scrum"},
-    {"question": "team_dev", "answer": "son los encargados de crear el producto, trabajando en sprints y colaborando entre sí"}
+    {"question": "team_dev", "answer": "son los encargados de crear el producto, trabajando en sprints y colaborando entre si"}
 ]
 random.shuffle(roles)
 
@@ -79,6 +79,12 @@ def rol():
         return render_template("completion.html", response="¡Has completado el quiz de roles de Scrum!")  # Nuevo template para finalizar
     
     return render_template("role_quiz.html", role=roles[session["role_idx"]], response=response)
+
+@app.route("/restart")
+def restart():
+    session.clear()  # Borra los datos de la sesión para empezar de nuevo
+    return render_template("restart.html")  # Nueva plantilla para confirmar el reinicio
+
 
 if __name__ == "__main__":
     app.run(debug=True)
