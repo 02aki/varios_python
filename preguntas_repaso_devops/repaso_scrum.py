@@ -1,7 +1,7 @@
 import random
 
-def main():
-    questions = [
+def scrum():
+    scrum_definitions = [
         {
             "question": "define scrum:",
             "answer": "es un marco de trabajo agil para gestionar proyectos complejos, especialmente en el desarrollo de software"
@@ -19,9 +19,9 @@ def main():
     attempts = 3
 
     # Shuffle questions
-    random.shuffle(questions)
+    random.shuffle(scrum_definitions)
 
-    for q in questions:
+    for q in scrum_definitions:
         print(q["question"])
         for attempt in range(attempts):
             user_answer = input(f"Intento {attempt + 1}: ")
@@ -68,5 +68,5 @@ def rol():
         print()  # Print a newline for better readability
 
 if __name__ == "__main__":
-    main()
+    scrum()
     rol()
