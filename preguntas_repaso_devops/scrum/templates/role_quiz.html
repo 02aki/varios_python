@@ -7,16 +7,22 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Preguntas sobre Roles en Scrum</h1>
-    <p>{{ role.question }}</p>
-    
-    <form method="POST">
-        <input type="text" name="answer" placeholder="Tu respuesta" required>
-        <button type="submit">Enviar</button>
-    </form>
+    <div class="container">
+        <h1>Preguntas sobre Roles</h1>
+        <p><strong>{{ role.question }}</strong></p>
 
-    {% if response %}
-        <p>{{ response }}</p>
-    {% endif %}
+        <form method="post">
+            <input type="text" name="answer" placeholder="Escribe tu respuesta" required>
+            <button type="submit">Responder</button>
+        </form>
+
+        {% if response %}
+            <p>{{ response }}</p>
+        {% endif %}
+    </div>
 </body>
 </html>
+
+
+
+

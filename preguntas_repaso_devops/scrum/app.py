@@ -22,7 +22,7 @@ events = [
     {"event": "sprint", "description": "interacciones cortas y fijas (generalmente de 2 a 4 semanas) en las que se trabaja para entregar un incremento del producto."},
     {"event": "sprint planning", "description": "el equipo planifica el trabajo del sprint y selecciona las tareas del product backlog."},
     {"event": "daily scrum", "description": "reunión diaria de 15 min. para sincronizar el trabajo y detectar obstáculos."},
-    {"event": "sprint review", "description": "se presenta el incremento del producto al product owner y a los interesados para obtener retroalimentación."},
+    {"event": "sprint review", "description": "se presenta el incremento del producto al product owner y a los interesados para obtener retro."},
     {"event": "sprint retrospective", "description": "el equipo reflexiona sobre el sprint y busca mejoras para el próximo."}
 ]
 random.shuffle(events)
@@ -33,8 +33,8 @@ def start():
     session["step"] = "questions"
     session["question_idx"] = 0
     session["role_idx"] = 0
-    session["event_answers"] = {}  # Guarda las respuestas de eventos
-    session["event_results"] = {}  # Guarda si la respuesta es correcta o incorrecta
+    session["event_idx"] = 0
+    session["attempts"] = 3
     return redirect(url_for("question_quiz"))
 
 @app.route("/questions", methods=["GET", "POST"])
@@ -48,7 +48,7 @@ def question_quiz():
         
         if user_answer == correct_answer:
             session["question_idx"] += 1
-    
+        
     if session["question_idx"] >= len(questions):
         session["step"] = "roles"
         return redirect(url_for("role_quiz"))
@@ -66,7 +66,7 @@ def role_quiz():
         
         if user_answer == correct_answer:
             session["role_idx"] += 1
-    
+        
     if session["role_idx"] >= len(roles):
         session["step"] = "events"
         return redirect(url_for("event_quiz"))
@@ -75,36 +75,25 @@ def role_quiz():
 
 @app.route("/events", methods=["GET", "POST"])
 def event_quiz():
-    if "step" not in session or session["step"] != "events":
+    if "event_idx" not in session:
         return redirect(url_for("start"))
     
-    correct_assignments = {event["event"].lower(): event["description"].lower() for event in events}
-    
+    response = ""
     if request.method == "POST":
-        user_answers = request.json.get("answers", {})
-        session["event_answers"] = user_answers  # Guardamos las respuestas en la sesión
-        
-        session["event_results"] = {
-            key: user_answers.get(key, "").strip().lower() == correct_assignments[key]
-            for key in correct_assignments
-        }
-        
-        correct_count = sum(session["event_results"].values())
-        total_events = len(correct_assignments)
-        
-        return jsonify({
-            "success": correct_count == total_events,
-            "message": f"Algunas asignaciones son incorrectas. {correct_count}/{total_events} correctas." if correct_count < total_events else "¡Correcto! Has asignado todos los eventos correctamente.",
-            "event_results": session["event_results"],
-            "answers": session["event_answers"]
-        })
-    
-    return render_template(
-        "event_quiz.html",
-        events=events,
-        user_answers=session.get("event_answers", {}),
-        event_results=session.get("event_results", {})
-    )
+        user_answer = request.form["answer"].strip().lower()
+        correct_answer = events[session["event_idx"]]["event"].lower()
+
+        if user_answer == correct_answer:
+            response = "¡Correcto!"
+            session["event_idx"] += 1
+        else:
+            response = "Incorrecto, intenta de nuevo."
+
+    if session["event_idx"] >= len(events):
+        return render_template("completion.html", response="¡Has completado el quiz de Scrum!")
+
+    return render_template("event_quiz.html", event=events[session["event_idx"]], response=response)
+
 
 @app.route("/restart")
 def restart():
