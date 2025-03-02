@@ -1,5 +1,5 @@
 import random
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify
+from flask import Flask, render_template, request, session, redirect, url_for
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -21,10 +21,17 @@ random.shuffle(roles)
 events = [
     {"event": "sprint", "description": "interacciones cortas y fijas (generalmente de 2 a 4 semanas) en las que se trabaja para entregar un incremento del producto."},
     {"event": "sprint planning", "description": "el equipo planifica el trabajo del sprint y selecciona las tareas del product backlog."},
-    {"event": "daily scrum", "description": "reunión diaria de 15 min. para sincronizar el trabajo y detectar obstáculos."},
-    {"event": "sprint review", "description": "se presenta el incremento del producto al product owner y a los interesados para obtener retroalimentación."},
+    {"event": "daily", "description": "reunión diaria de 15 min. para sincronizar el trabajo y detectar obstáculos."},
+    {"event": "sprint review", "description": "se presenta el incremento del producto al product owner y a los interesados para obtener retro."},
     {"event": "sprint retrospective", "description": "el equipo reflexiona sobre el sprint y busca mejoras para el próximo."}
 ]
+random.shuffle(events)
+
+artefacts = [
+    {"artefacts": "product backlog", "description": "lista priorizada de todas las funcionalidades y mejoras del producto"},
+    {"artefacts": "sprint backlog", "description": "lista de tareas seleccionadas del product backlog para el sprint actual"},
+    {"artefacts": "incremento", "description": "la suma de todos los elementos del product backlog completada durante un sprint y los incrementos de todos los sprint anteriores"},
+   ]
 random.shuffle(events)
 
 @app.route("/")
@@ -33,8 +40,9 @@ def start():
     session["step"] = "questions"
     session["question_idx"] = 0
     session["role_idx"] = 0
-    session["event_answers"] = {}  # Guarda las respuestas de eventos
-    session["event_results"] = {}  # Guarda si la respuesta es correcta o incorrecta
+    session["event_idx"] = 0
+    session["artefacts_idx"] = 0
+    session["attempts"] = 3
     return redirect(url_for("question_quiz"))
 
 @app.route("/questions", methods=["GET", "POST"])
@@ -48,7 +56,7 @@ def question_quiz():
         
         if user_answer == correct_answer:
             session["question_idx"] += 1
-    
+        
     if session["question_idx"] >= len(questions):
         session["step"] = "roles"
         return redirect(url_for("role_quiz"))
@@ -66,7 +74,7 @@ def role_quiz():
         
         if user_answer == correct_answer:
             session["role_idx"] += 1
-    
+        
     if session["role_idx"] >= len(roles):
         session["step"] = "events"
         return redirect(url_for("event_quiz"))
@@ -75,36 +83,37 @@ def role_quiz():
 
 @app.route("/events", methods=["GET", "POST"])
 def event_quiz():
-    if "step" not in session or session["step"] != "events":
+    if "event_idx" not in session:
         return redirect(url_for("start"))
     
-    correct_assignments = {event["event"].lower(): event["description"].lower() for event in events}
+    if request.method == "POST":
+        user_answer = request.form["answer"].strip().lower()
+        correct_answer = events[session["event_idx"]]["event"].lower()
+        
+        if user_answer == correct_answer:
+            session["event_idx"] += 1
+        
+    if session["event_idx"] >= len(events):
+    #    return render_template("completion.html", response="¡Has completado el quiz de eventos de Scrum!")
+    
+        return render_template("event_quiz.html", event=events[session["event_idx"]])
+
+@app.route("/artefacts", methods=["GET", "POST"])
+def artefacts_quiz():
+    if "artefacts_idx" not in session:
+        return redirect(url_for("start"))
     
     if request.method == "POST":
-        user_answers = request.json.get("answers", {})
-        session["event_answers"] = user_answers  # Guardamos las respuestas en la sesión
+        user_answer = request.form["answer"].strip().lower()
+        correct_answer = events[session["artefacts_idx"]]["artefacts"].lower()
         
-        session["event_results"] = {
-            key: user_answers.get(key, "").strip().lower() == correct_assignments[key]
-            for key in correct_assignments
-        }
+        if user_answer == correct_answer:
+            session["artefacts_idx"] += 1
         
-        correct_count = sum(session["event_results"].values())
-        total_events = len(correct_assignments)
-        
-        return jsonify({
-            "success": correct_count == total_events,
-            "message": f"Algunas asignaciones son incorrectas. {correct_count}/{total_events} correctas." if correct_count < total_events else "¡Correcto! Has asignado todos los eventos correctamente.",
-            "event_results": session["event_results"],
-            "answers": session["event_answers"]
-        })
+    if session["artefacts_idx"] >= len(events):
+        return render_template("completion.html", response="¡Has completado el quiz de artefactos de Scrum!")
     
-    return render_template(
-        "event_quiz.html",
-        events=events,
-        user_answers=session.get("event_answers", {}),
-        event_results=session.get("event_results", {})
-    )
+    return render_template("artefacts_quiz.html", artefact=artefacts[session["artefacts_idx"]])
 
 @app.route("/restart")
 def restart():
