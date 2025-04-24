@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ubuntu Web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="desktop">
+        <!-- Barra superior -->
+        <div class="top-bar">
+            <span id="clock">🕒 12:00</span>
+        </div>
+
+        <!-- Dock lateral -->
+        <div class="dock">
+            <div class="icon" onclick="openWindow('firefox')">🦊</div>
+            <div class="icon" onclick="openWindow('files')">📁</div>
+            <div class="icon" onclick="openWindow('terminal')">💻</div>
+        </div>
+    </div>
+
+    <!-- Ventanas flotantes (ocultas por defecto) -->
+    <div id="firefox" class="window" style="display: none;">
+        <div class="window-header">
+            <span>Firefox</span>
+            <button onclick="closeWindow('firefox')">X</button>
+        </div>
+        <div class="window-body">
+            <p>Aquí abriría Firefox.</p>
+        </div>
+    </div>
+
+    <div id="files" class="window" style="display: none;">
+        <div class="window-header">
+            <span>Explorador de Archivos</span>
+            <button onclick="closeWindow('files')">X</button>
+        </div>
+        <div class="window-body">
+            <p>Aquí abrirías el explorador de archivos.</p>
+        </div>
+    </div>
+
+    <div id="terminal" class="window" style="display: none;">
+        <div class="window-header">
+            <span>Terminal</span>
+            <button onclick="closeWindow('terminal')">X</button>
+        </div>
+        <div class="window-body">
+            <input type="text" id="command-input" placeholder="Escribe un comando..." onkeypress="handleKeyPress(event)">
+            <button onclick="runCommand()">Ejecutar</button>
+            <pre id="terminal-output"></pre>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

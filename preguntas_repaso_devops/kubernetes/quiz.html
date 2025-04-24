@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Quiz de Kubernetes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .quiz-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 600px;
+    }
+    h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <h2 id="question">Cargando pregunta...</h2>
+  <input type="text" id="answer" placeholder="Escribe tu respuesta aquí..." />
+  <button onclick="submitAnswer()">Responder</button>
+  <p class="feedback" id="feedback"></p>
+</div>
+
+<script>
+  const questions = {
+    "¿Qué es Kubernetes?": "Es un sistema de orquestación de contenedores.",
+    "¿Cuál es el componente principal de Kubernetes que se encarga de la gestión del clúster?": "El servidor API.",
+    "¿Qué es un Pod en Kubernetes?": "Es la unidad más pequeña que se puede desplegar en Kubernetes.",
+    "¿Qué es un ReplicaSet?": "Asegura que un número específico de Pods idénticos esté corriendo en un clúster.",
+    "¿Qué herramienta se utiliza para desplegar aplicaciones en Kubernetes?": "kubectl.",
+    "¿Qué es un DaemonSet?": "Asegura que todos (o algunos) nodos ejecuten una copia de un Pod.",
+    "¿Qué es un Deployment?": "Un objeto que gestiona la creación y actualización de Pods.",
+    "¿Qué es el Kubelet?": "Es un agente que corre en cada nodo del clúster y se encarga de la gestión de los Pods.",
+    "¿Qué es Kube Proxy?": "Es un componente que permite la comunicación de red entre los servicios dentro del clúster.",
+    "¿Qué es etcd?": "Es un almacén de datos clave-valor distribuido que almacena la configuración y el estado del clúster.",
+    "¿Qué hace el Scheduler en Kubernetes?": "Asigna Pods a nodos en función de los recursos disponibles.",
+    "¿Qué es el Controller Manager?": "Es un componente que gestiona los controladores que regulan el estado del clúster.",
+    "¿Qué es el Runtime en Kubernetes?": "Es el entorno que ejecuta los contenedores, como Docker o containerd.",
+    "¿Qué es un nodo en Kubernetes?": "Es una máquina física o virtual que ejecuta pods y es parte del clúster.",
+    "¿Qué es un Service?": "Es una abstracción que define un conjunto de Pods y una forma de acceder a ellos.",
+    "¿Qué es un Ingress?": "Es un objeto que gestiona el acceso externo a los servicios dentro del clúster.",
+    "¿Qué hace el Controlador de Ingress?": "Gestiona el tráfico de red hacia los servicios a través del objeto Ingress.",
+    "¿Qué es un clúster en Kubernetes?": "Es un conjunto de nodos que ejecutan aplicaciones containerizadas.",
+    "¿Qué es un Namespace?": "Es una forma de segmentar el clúster para agrupar recursos y evitar conflictos de nombres."
+  };
+
+  const questionKeys = Object.keys(questions);
+  let currentIndex = 0;
+  let score = 0;
+
+  const questionEl = document.getElementById("question");
+  const answerEl = document.getElementById("answer");
+  const feedbackEl = document.getElementById("feedback");
+
+  function showQuestion() {
+    if (currentIndex < questionKeys.length) {
+      questionEl.textContent = questionKeys[currentIndex];
+      answerEl.value = "";
+      feedbackEl.textContent = "";
+    } else {
+      questionEl.textContent = `¡Fin del quiz! Tu puntuación final es: ${score}/${questionKeys.length}`;
+      answerEl.style.display = "none";
+      document.querySelector("button").style.display = "none";
+    }
+  }
+
+  function submitAnswer() {
+    const userAnswer = answerEl.value.trim().toLowerCase();
+    const correctAnswer = questions[questionKeys[currentIndex]].toLowerCase();
+
+    if (userAnswer === correctAnswer) {
+      score++;
+      feedbackEl.textContent = "¡Correcto!";
+      feedbackEl.style.color = "green";
+    } else {
+      feedbackEl.textContent = `Incorrecto. La respuesta correcta es: ${questions[questionKeys[currentIndex]]}`;
+      feedbackEl.style.color = "red";
+    }
+
+    setTimeout(() => {
+      currentIndex++;
+      showQuestion();
+    }, 1500);
+  }
+
+  // Iniciar quiz al cargar la página
+  window.onload = showQuestion;
+</script>
+
+</body>
+</html>
